@@ -6,6 +6,7 @@ import java.awt.FlowLayout;
 import java.awt.Dimension;
 import javax.swing.JLabel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -18,7 +19,9 @@ import java.util.LinkedList;
 
 public class Main extends JFrame{
 	private int[] SCREEN = {1000, 700};
-	private int counter = 0;
+	private int counter = 1;
+	private String[] departments = {"Human Resources (HR)", "Finance", "Sales", "Marketing", "Information Technology (IT)"};
+	private String[] ranks = {"Manager", "Supervisor", "Rank and File"};
 	private LinkedList<Employee> employees = new LinkedList<Employee>();
 	private EmployeeTableModel employeeTabModel = new EmployeeTableModel();
 	private JTable employeeTable = new JTable(employeeTabModel);
@@ -50,8 +53,10 @@ public class Main extends JFrame{
 
 	private void addButtonClicked(){
         JTextField nameField = new JTextField();
-        JTextField departmentField = new JTextField();
-        JTextField rankField = new JTextField();
+        JComboBox<String> departmentField = new JComboBox<String>(this.departments);
+        JComboBox<String> rankField = new JComboBox<String>(this.ranks);
+		departmentField.setSelectedItem(null);
+		rankField.setSelectedItem(null);
         Object[] message = {
                 "Name:", nameField,
                 "Department:", departmentField,
@@ -60,13 +65,14 @@ public class Main extends JFrame{
         int option = JOptionPane.showConfirmDialog(this, message, "Add Employee", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
             String name = nameField.getText();
-            String department = departmentField.getText();
-            String rank = rankField.getText();
+            String department = (String)departmentField.getSelectedItem();
+            String rank = (String)rankField.getSelectedItem();
             int id = this.counter;
 			this.counter++;
             Employee newEmployee = new Employee(Integer.toString(id), name, department, rank);
             this.employees.add(newEmployee);
 			this.employeeTabModel.addRow(new Object[] {Integer.toString(id), name, department, rank});
+			
         }
 	}
 
