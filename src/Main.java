@@ -1,9 +1,11 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Dimension;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -44,11 +46,30 @@ public class Main extends JFrame{
 		this.buttonPanel.add(deleteButton);
 
 		add(this.computePanel, BorderLayout.EAST);
-		this.computePanel.add(new JLabel("Employee Name: "));
 
 		setSize(new Dimension(SCREEN[0], SCREEN[1]));
 		setVisible(true);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+	}
+
+	private void initializeEmployees(){
+		try{
+			BufferedReader reader = new BufferedReader(new FileReader("./employees.txt"));			
+			String line;
+			while((line = reader.readLine()) != null){
+				String[] infos = line.split(",");				
+				Employee employee = new Employee(Integer.toString(this.counter), infos[0], infos[1], infos[2]);
+				this.employees.add(employee);
+				this.employeeTabModel.addRow(new Object[]{Integer.toString(this.counter), infos[0], infos[1], infos[2]});
+				this.counter++;
+			}
+			reader.close();
+		}
+		catch(IOException e){
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "employees.txt not Found. Please create one.");
+			System.exit(1);
+		}
 	}
 
 	private void addButtonClicked(){
@@ -84,6 +105,7 @@ public class Main extends JFrame{
 
 	public static void main(String[] args){
 		Main main = new Main();
+		main.initializeEmployees();
 		main.run();
 	}
 }
@@ -102,6 +124,10 @@ class ComputePanel extends JPanel{
 	public ComputePanel(int[] SCREEN){
 		int width = (SCREEN[0]/3);
 		int height = SCREEN[1];
+		JLabel employeeNameLabel = new JLabel("Employee Name: ");
+		add(employeeNameLabel);
+		JLabel employeeIDLabel = new JLabel("Employee ID: ");
+		add(employeeIDLabel);
 		setPreferredSize(new Dimension(width, height));
 		setBackground(new Color(72,75,106));
 	}
